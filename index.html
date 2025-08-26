@@ -17,6 +17,7 @@
   <!-- MarkerCluster CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+
   <style>
     :root{
       --bg:#0f1220; --panel:#14182b; --panel-2:#1a1f39; --text:#e5e7ef; --muted:#aab0c6;
@@ -25,15 +26,10 @@
       --overlay:rgba(0,0,0,.55);
     }
     html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-    .app{
-      display:grid; grid-template-columns: clamp(380px, 34vw, 560px) 1fr; grid-template-rows: 100vh; min-width:0;
-    }
-    .sidebar{
-      background:var(--panel); padding:16px; overflow:auto; min-width:0; position:relative; transition:background-color .3s;
-    }
-    #map{height:100vh; min-width:0;}
+    .app{display:grid;grid-template-columns: clamp(380px, 34vw, 560px) 1fr;grid-template-rows: 100vh;min-width:0;}
+    .sidebar{background:var(--panel);padding:16px;overflow:auto;min-width:0;position:relative;transition:background-color .3s;}
+    #map{height:100vh;min-width:0;}
 
-    /* Header */
     .header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;}
     .brand{flex:1;text-align:center;}
     .logo-sticker{
@@ -45,7 +41,6 @@
     .title{font-size:20px;font-weight:700;margin:0}
     .hint{color:var(--muted);font-size:12px}
 
-    /* Cards / Inputs / Buttons */
     .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;margin:10px 0}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px;line-height:1.2;word-break:break-word}
@@ -53,20 +48,13 @@
       width:100%;padding:9px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.14);
       background:#0d1122;color:var(--text);outline:none;min-width:0;
     }
-    .btn{
-      display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);background:#0d1122;color:var(--text);
-      cursor:pointer;text-decoration:none;white-space:normal;line-height:1.15;
-    }
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:#0d1122;color:var(--text);cursor:pointer;}
     .btn.primary{background:var(--accent);color:#0b1020;font-weight:700;border:none}
     .btn.icon{padding:8px;border-radius:50%;}
     .btn:disabled{opacity:.6;cursor:not-allowed}
-
-    /* Drag & drop */
     .drop{border:2px dashed rgba(255,255,255,.2);border-radius:12px;padding:16px;text-align:center;transition:.15s;background:rgba(106,163,255,.05)}
     .drop.dragover{background:rgba(106,163,255,.12);border-color:var(--accent)}
 
-    /* Filtres, stats, progress */
     .filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .filters .group{background:rgba(255,255,255,.06);border-radius:10px;padding:10px}
     .filters .group label{display:flex;align-items:flex-start;gap:8px;white-space:normal}
@@ -85,7 +73,6 @@
     .error{color:var(--danger)} .success{color:var(--ok)} .warn{color:var(--warn)}
     .invalid{border-color:var(--danger)!important;box-shadow:0 0 0 2px rgba(255,106,122,.2)}
 
-    /* Modal Paramètres */
     .modal-overlay{position:fixed;inset:0;background:var(--overlay);display:none;align-items:center;justify-content:center;z-index:2000;}
     .modal{width:min(880px, 92vw);max-height:86vh;overflow:auto;background:#0d1122;border:1px solid rgba(255,255,255,.14);border-radius:14px;box-shadow:0 15px 50px rgba(0,0,0,.6);padding:16px}
     .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -96,23 +83,13 @@
     .palette{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
     .swatch{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid rgba(255,255,255,.2);box-shadow:0 1px 3px rgba(0,0,0,.4);}
 
-    /* Responsive */
-    @media (max-width: 1280px){
-      .row{grid-template-columns:1fr;}
-      .stats{grid-template-columns:repeat(2,1fr);}
-      .filters{grid-template-columns:1fr;}
-      .modal .row{grid-template-columns:1fr;}
-    }
-    @media (max-width: 820px){
-      .app{grid-template-columns:1fr;}
-      #map{height:65vh;}
-    }
+    @media (max-width: 1280px){ .row{grid-template-columns:1fr;} .stats{grid-template-columns:repeat(2,1fr);} .filters{grid-template-columns:1fr;} .modal .row{grid-template-columns:1fr;} }
+    @media (max-width: 820px){ .app{grid-template-columns:1fr;} #map{height:65vh;} }
   </style>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <!-- Header : logo AU-DESSUS du titre + icône paramètres -->
     <div class="header">
       <div class="brand">
         <div class="logo-sticker" id="logoBox"></div>
@@ -127,7 +104,6 @@
       </button>
     </div>
 
-    <!-- Import fichier (Drag & Drop + input) -->
     <div class="card drop" id="drop">
       <p><strong>Glissez-déposez</strong> un <code>.xlsx</code> / <code>.csv</code><br>
         <label class="btn" style="margin-top:8px;">
@@ -138,7 +114,6 @@
       <p class="hint">CSV FR (séparateur <code>;</code>) pris en charge automatiquement.</p>
     </div>
 
-    <!-- Filtres principaux (affichage + heatmap) -->
     <div class="card">
       <div class="filters">
         <div class="group">
@@ -164,15 +139,12 @@
       </div>
     </div>
 
-    <!-- Action principale -->
     <div class="card">
       <div style="display:flex; gap:8px; flex-wrap: wrap;">
         <button class="btn primary" id="btn-run" disabled>Placer sur la carte</button>
-        <!-- Exports déplacés dans le modal -->
       </div>
     </div>
 
-    <!-- Stats & progression -->
     <div class="card">
       <div class="stats">
         <div class="stat"><div class="n" id="st-total">0</div><div class="l">Total</div></div>
@@ -193,10 +165,9 @@
       <div id="log" class="hint" style="margin-top:8px; max-height:160px; overflow:auto;"></div>
     </div>
 
-    <!-- Légende -->
     <div class="card">
       <label>Légende</label>
-      <div class="legend" id="legend">
+      <div class="legend">
         <div class="legend-item"><span class="shape" style="background:var(--cli); clip-path:circle(50% at 50% 50%);"></span> Clients B2B</div>
         <div class="legend-item"><span class="shape" style="background:var(--pro); transform:rotate(45deg);"></span> Prospects</div>
         <div class="legend-item"><span class="shape" style="background:var(--pot); border:2px solid #b38a00; transform:rotate(45deg);"></span> Potentiels</div>
@@ -204,10 +175,7 @@
       </div>
     </div>
 
-    <div class="foot">
-      🍃 Tuiles © OpenStreetMap — Respect Nominatim (1 req/s).  
-      UX: cliquez un point → zoom animé + popup.
-    </div>
+    <div class="foot">🍃 Tuiles © OpenStreetMap — Respect Nominatim (1 req/s). • Clic point ⇒ zoom + popup.</div>
   </aside>
 
   <div id="map"></div>
@@ -227,78 +195,42 @@
       </div>
     </div>
 
-    <!-- Mapping des colonnes -->
+    <!-- Mapping colonnes -->
     <div class="card">
-      <div class="hint" style="margin-bottom:6px;">Mapping des colonnes du fichier (détection auto si vous suivez le template).</div>
+      <div class="hint" style="margin-bottom:6px;">Mapping des colonnes (auto si template respecté).</div>
       <div class="row">
-        <div>
-          <label>Colonne latitude</label>
-          <input id="col-lat" type="text" placeholder="lat | latitude | y" />
-        </div>
-        <div>
-          <label>Colonne longitude</label>
-          <input id="col-lon" type="text" placeholder="lon | lng | longitude | x" />
-        </div>
+        <div><label>Col. latitude</label><input id="col-lat" type="text" placeholder="lat | latitude | y" /></div>
+        <div><label>Col. longitude</label><input id="col-lon" type="text" placeholder="lon | lng | longitude | x" /></div>
       </div>
-      <div style="margin-top:8px">
-        <label>Colonne adresse (si pas de lat/lon)</label>
-        <input id="col-addr" type="text" placeholder="adresse | address" />
-      </div>
+      <div style="margin-top:8px"><label>Col. adresse (si pas lat/lon)</label><input id="col-addr" type="text" placeholder="adresse | address" /></div>
       <div class="row" style="margin-top:8px">
-        <div>
-          <label>Colonne TYPE (client/prospect/potentiel/concurrent)</label>
-          <input id="col-type" type="text" placeholder="type | statut | segment | categorie" />
-        </div>
-        <div>
-          <label>Colonne SOUS-TYPE (pour prospects)</label>
-          <input id="col-subtype" type="text" placeholder="sous_type | phase | etat" />
-        </div>
+        <div><label>Col. TYPE</label><input id="col-type" type="text" placeholder="type | statut | segment | categorie" /></div>
+        <div><label>Col. SOUS-TYPE</label><input id="col-subtype" type="text" placeholder="sous_type | phase | etat" /></div>
       </div>
-      <div style="margin-top:8px">
-        <label>Colonne Nom/Enseigne (popup)</label>
-        <input id="col-name" type="text" placeholder="nom | enseigne | raison_sociale" />
-      </div>
+      <div style="margin-top:8px"><label>Col. Nom/Enseigne</label><input id="col-name" type="text" placeholder="nom | enseigne | raison_sociale" /></div>
     </div>
 
-    <!-- Paramètres de géocodage -->
+    <!-- Géocodage -->
     <div class="card">
       <div class="hint" style="margin-bottom:6px;">Paramètres de géocodage</div>
       <div class="row">
-        <div>
-          <label>Max adresses à géocoder</label>
-          <input id="max-geocode" type="number" min="0" value="500" />
-        </div>
-        <div>
-          <label>Délai entre requêtes (ms)</label>
-          <input id="delay" type="number" min="300" value="1000" />
-        </div>
+        <div><label>Max à géocoder</label><input id="max-geocode" type="number" min="0" value="500" /></div>
+        <div><label>Délai (ms)</label><input id="delay" type="number" min="300" value="1000" /></div>
       </div>
       <div class="row" style="margin-top:8px">
-        <div>
-          <label>Clé Geoapify (optionnel)</label>
-          <input id="geoapify" type="text" placeholder="clé API pour géocoder" />
-        </div>
-        <div>
-          <label>Email Nominatim (optionnel)</label>
-          <input id="email" type="text" placeholder="contact@exemple.com" />
-        </div>
+        <div><label>Clé Geoapify (optionnel)</label><input id="geoapify" type="text" placeholder="clé API pour géocoder" /></div>
+        <div><label>Email Nominatim (optionnel)</label><input id="email" type="text" placeholder="contact@exemple.com" /></div>
       </div>
       <div class="row" style="margin-top:8px">
-        <div>
-          <label>Pays par défaut (ISO, ex. fr)</label>
-          <input id="country" type="text" value="fr" placeholder="fr, be, es…" />
-        </div>
-        <div>
-          <label>&nbsp;</label>
-          <div class="hint">Contraint Nominatim à ce pays (+ fallback “, France”)</div>
-        </div>
+        <div><label>Pays par défaut (ex. fr)</label><input id="country" type="text" value="fr" placeholder="fr, be, es…" /></div>
+        <div><label>&nbsp;</label><div class="hint">Filtre Nominatim + fallback “, France”.</div></div>
       </div>
     </div>
 
     <!-- Personnalisation UI -->
     <div class="card">
-      <div class="hint" style="margin-bottom:6px;">Personnalisation visuelle de la colonne de gauche</div>
-      <label>Couleur de fond (choix libre)</label>
+      <div class="hint" style="margin-bottom:6px;">Couleur de la colonne de gauche</div>
+      <label>Couleur libre</label>
       <input type="color" id="sidebarColor" />
       <div class="palette">
         <div class="swatch" data-color="#14182b" style="background:#14182b" title="Bleu nuit"></div>
@@ -318,7 +250,6 @@
         <button class="btn" id="btn-clear-cache">Vider cache géocodage</button>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -329,21 +260,21 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script>
-/* ====== Utils ====== */
-const sleep = (ms) => new Promise(res => setTimeout(res, ms));
-const escapeHTML = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-function toNumber(v){ if(v===null||v===undefined||v==='') return null; const n = Number(String(v).replace(',', '.')); return Number.isFinite(n)?n:null; }
-const el = (id) => document.getElementById(id);
+/* ========= Utils ========= */
+const sleep = (ms)=>new Promise(res=>setTimeout(res,ms));
+const escapeHTML = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+const toNumber = v => { if(v===null||v===undefined||v==='') return null; const n=Number(String(v).replace(',','.')); return Number.isFinite(n)?n:null; };
+const el = id => document.getElementById(id);
 
-/* ====== Détection colonnes ====== */
-const guessCol = (headers, cands) => { const lc = headers.map(h => (h ?? '').toString().trim().toLowerCase()); for (const c of cands){ const i = lc.indexOf(c); if (i >= 0) return headers[i]; } return ''; };
-const detectColumns = (rows) => { if (!rows?.length) return {lat:'',lon:'',addr:'',type:'',sub:'',name:''}; const headers = Object.keys(rows[0]); return { lat: guessCol(headers, ['lat','latitude','y']), lon: guessCol(headers, ['lon','lng','long','longitude','x']), addr: guessCol(headers, ['adresse','address','adresse_postale']), type: guessCol(headers, ['type','statut','segment','categorie','category']), sub: guessCol(headers, ['sous_type','sous-statut','subtype','phase','etat','status_detail']), name: guessCol(headers, ['nom','enseigne','raison_sociale','name','label']) }; };
+/* ========= Détection colonnes ========= */
+const guessCol=(headers,cands)=>{const lc=headers.map(h=>(h??'').toString().trim().toLowerCase());for(const c of cands){const i=lc.indexOf(c);if(i>=0)return headers[i]}return''};
+const detectColumns=(rows)=>{if(!rows?.length)return{lat:'',lon:'',addr:'',type:'',sub:'',name:''};const headers=Object.keys(rows[0]);return{lat:guessCol(headers,['lat','latitude','y']),lon:guessCol(headers,['lon','lng','long','longitude','x']),addr:guessCol(headers,['adresse','address','adresse_postale']),type:guessCol(headers,['type','statut','segment','categorie','category']),sub:guessCol(headers,['sous_type','sous-statut','subtype','phase','etat','status_detail']),name:guessCol(headers,['nom','enseigne','raison_sociale','name','label'])};};
 
-/* ====== Carte ====== */
-const map = L.map('map', { preferCanvas: true }).setView([46.7, 2.3], 6);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
+/* ========= Carte ========= */
+const map = L.map('map', { preferCanvas:true }).setView([46.7,2.3],6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
 
-/* Couches cluster par groupe */
+/* Clusters par catégories */
 const groupLayers = {
   clients: L.markerClusterGroup({ disableClusteringAtZoom: 15 }),
   prospects: L.markerClusterGroup({ disableClusteringAtZoom: 15 }),
@@ -351,373 +282,198 @@ const groupLayers = {
   concurrents: L.markerClusterGroup({ disableClusteringAtZoom: 15 }),
   inconnus: L.markerClusterGroup({ disableClusteringAtZoom: 15 })
 };
-Object.values(groupLayers).forEach(gl => map.addLayer(gl));
-let heatLayers = { clients:null, prospects:null, potentiels:null, concurrents:null };
+Object.values(groupLayers).forEach(gl=>map.addLayer(gl));
+let heatLayers={clients:null,prospects:null,potentiels:null,concurrents:null};
 
-let currentMarkers = [];
-let parsedRows = [];
-let errors = [];
+let currentMarkers=[]; let parsedRows=[]; let errors=[];
 const TARGET_ZOOM = 18;
 
-/* ====== UI refs ====== */
-const $file = el('file'), $drop = el('drop'), $btnRun = el('btn-run'), $btnExport = el('btn-export'), $btnExportErr = el('btn-export-errors');
-const $colLat = el('col-lat'), $colLon = el('col-lon'), $colAddr = el('col-addr');
-const $colType = el('col-type'), $colSub = el('col-subtype'), $colName = el('col-name');
-const $email = el('email'), $geoapify = el('geoapify'), $country = el('country');
-const $maxGeocode = el('max-geocode'), $delay = el('delay');
-const $log = el('log'), $bar = el('progressbar');
-const $stTotal = el('st-total'), $stPlotted = el('st-plotted'), $stQueue = el('st-queue'), $stErrors = el('st-errors');
-const $stCli = el('st-cli'), $stPro = el('st-pro'), $stPot = el('st-pot'), $stCon = el('st-con');
+/* ========= Références DOM ========= */
+const $file=el('file'), $drop=el('drop'), $btnRun=el('btn-run'), $btnExport=el('btn-export'), $btnExportErr=el('btn-export-errors');
+const $colLat=el('col-lat'), $colLon=el('col-lon'), $colAddr=el('col-addr'), $colType=el('col-type'), $colSub=el('col-subtype'), $colName=el('col-name');
+const $email=el('email'), $geoapify=el('geoapify'), $country=el('country'), $maxGeocode=el('max-geocode'), $delay=el('delay');
+const $log=el('log'), $bar=el('progressbar'), $stTotal=el('st-total'), $stPlotted=el('st-plotted'), $stQueue=el('st-queue'), $stErrors=el('st-errors'), $stCli=el('st-cli'), $stPro=el('st-pro'), $stPot=el('st-pot'), $stCon=el('st-con');
+const $fClients=el('f-clients'), $fProspects=el('f-prospects'), $fPotentiels=el('f-potentiels'), $fConcurrents=el('f-concurrents');
+const $hClients=el('h-clients'), $hProspects=el('h-prospects'), $hPotentiels=el('h-potentiels'), $hConcurrents=el('h-concurrents');
 
-/* Filtres */
-const $fClients = el('f-clients'), $fProspects = el('f-prospects'), $fPotentiels = el('f-potentiels'), $fConcurrents = el('f-concurrents');
-const $hClients = el('h-clients'), $hProspects = el('h-prospects'), $hPotentiels = el('h-potentiels'), $hConcurrents = el('h-concurrents');
+/* ========= Log & validation ========= */
+function log(msg,cls=''){const d=document.createElement('div');if(cls)d.className=cls;d.innerHTML=msg;$log.appendChild(d);$log.scrollTop=$log.scrollHeight;}
+function setInvalid(input,invalid){if(!input)return;input.classList.toggle('invalid',!!invalid);}
 
-/* ====== Log & validation ====== */
-function log(msg, cls=''){ const d=document.createElement('div'); if(cls) d.className=cls; d.innerHTML=msg; $log.appendChild(d); $log.scrollTop=$log.scrollHeight; }
-function setInvalid(input, invalid){ if(!input) return; input.classList.toggle('invalid', !!invalid); }
-
-/* ====== Lecture fichier ====== */
-async function parseXLSX(arrayBuffer){ const wb = XLSX.read(arrayBuffer, { type: 'array', cellDates: true }); const sheetName = wb.SheetNames.find(n => { const ws = wb.Sheets[n]; const aoa = XLSX.utils.sheet_to_json(ws, { header:1, blankrows:false }); return Array.isArray(aoa) && aoa.length > 0 && aoa[0].length > 0; }) || wb.SheetNames[0]; const ws = wb.Sheets[sheetName]; return XLSX.utils.sheet_to_json(ws, { defval: '' }); }
-async function parseCSV(file){ const text = await file.text(); const firstLines = text.split(/\r?\n/).slice(0,5).join('\n'); const commaCount = (firstLines.match(/,/g) || []).length; const semiCount  = (firstLines.match(/;/g) || []).length; let normalized = text; if (semiCount > commaCount) normalized = text.replace(/;/g, ','); const wb = XLSX.read(normalized, { type: 'string' }); const ws = wb.Sheets[wb.SheetNames[0]]; return XLSX.utils.sheet_to_json(ws, { defval: '' }); }
+/* ========= Parsing fichiers ========= */
+async function parseXLSX(buf){const wb=XLSX.read(buf,{type:'array',cellDates:true});const sheet=wb.SheetNames.find(n=>{const aoa=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,blankrows:false});return Array.isArray(aoa)&&aoa.length>0&&aoa[0].length>0;})||wb.SheetNames[0];return XLSX.utils.sheet_to_json(wb.Sheets[sheet],{defval:''});}
+async function parseCSV(file){const text=await file.text();const first=text.split(/\r?\n/).slice(0,5).join('\n');const comma=(first.match(/,/g)||[]).length;const semi=(first.match(/;/g)||[]).length;const normalized=semi>comma?text.replace(/;/g,','):text;const wb=XLSX.read(normalized,{type:'string'});return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});}
 async function handleFile(file){
-  $log.innerHTML = '';
-  log(`Lecture du fichier <em>${escapeHTML(file.name)}</em>…`);
-  try { if (file.name.toLowerCase().endsWith('.csv')) parsedRows = await parseCSV(file); else parsedRows = await parseXLSX(await file.arrayBuffer()); }
-  catch (e) { parsedRows = []; log('Erreur de lecture : ' + escapeHTML(e.message || e), 'error'); }
-  $stTotal.textContent = parsedRows.length;
-  if (!parsedRows.length){ $btnRun.disabled = true; log('Aucune ligne détectée.', 'error'); return; }
-
-  const det = detectColumns(parsedRows);
-  if(!$colLat.value)  $colLat.value  = det.lat;
-  if(!$colLon.value)  $colLon.value  = det.lon;
-  if(!$colAddr.value) $colAddr.value = det.addr;
-  if(!$colType.value) $colType.value = det.type;
-  if(!$colSub.value)  $colSub.value  = det.sub;
-  if(!$colName.value) $colName.value = det.name;
-
+  $log.innerHTML=''; log(`Lecture du fichier <em>${escapeHTML(file.name)}</em>…`);
+  try{ parsedRows = file.name.toLowerCase().endsWith('.csv') ? await parseCSV(file) : await parseXLSX(await file.arrayBuffer()); }
+  catch(e){ parsedRows=[]; log('Erreur de lecture : '+escapeHTML(e.message||e),'error'); }
+  $stTotal.textContent=parsedRows.length;
+  if(!parsedRows.length){ $btnRun.disabled=true; log('Aucune ligne détectée.','error'); return; }
+  const det=detectColumns(parsedRows);
+  if(!$colLat.value)$colLat.value=det.lat; if(!$colLon.value)$colLon.value=det.lon; if(!$colAddr.value)$colAddr.value=det.addr;
+  if(!$colType.value)$colType.value=det.type; if(!$colSub.value)$colSub.value=det.sub; if(!$colName.value)$colName.value=det.name;
   log(`Colonnes → lat:<b>${escapeHTML($colLat.value||'')}</b> / lon:<b>${escapeHTML($colLon.value||'')}</b> / adresse:<b>${escapeHTML($colAddr.value||'')}</b> / type:<b>${escapeHTML($colType.value||'')}</b> / sous-type:<b>${escapeHTML($colSub.value||'')}</b> / nom:<b>${escapeHTML($colName.value||'')}</b>.`);
-  $btnRun.disabled = false;
+  $btnRun.disabled=false;
+}
+/* DnD */
+function attachDnD(){
+  ['dragenter','dragover'].forEach(evt=>$drop.addEventListener(evt,e=>{e.preventDefault();e.stopPropagation();$drop.classList.add('dragover');}));
+  ['dragleave','drop'].forEach(evt=>$drop.addEventListener(evt,e=>{e.preventDefault();e.stopPropagation();$drop.classList.remove('dragover');}));
+  $drop.addEventListener('drop',async e=>{const f=e.dataTransfer.files?.[0];if(f)await handleFile(f);});
+  $file.addEventListener('change',async e=>{const f=e.target.files?.[0];if(f)await handleFile(f);});
 }
 
-/* ====== DnD ====== */
-const $drop = el('drop'), $file = el('file');
-['dragenter','dragover'].forEach(evt => $drop.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); $drop.classList.add('dragover'); }));
-['dragleave','drop'].forEach(evt => $drop.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); $drop.classList.remove('dragover'); }));
-$drop.addEventListener('drop', async (e) => { const file = e.dataTransfer.files?.[0]; if (file) await handleFile(file); });
-$file.addEventListener('change', async (e) => { const file = e.target.files?.[0]; if (file) await handleFile(file); });
-
-/* ====== Catégorisation & style ====== */
-function normalize(s){ return String(s||'').trim().toLowerCase(); }
-function getCategory(type, sub){
-  const t = normalize(type), st = normalize(sub);
-  if (t.includes('client')) return 'clients';
-  if (t.includes('concur') || t.includes('compet')) return 'concurrents';
-  if (t.includes('prospect')) return (st.includes('potent') || t.includes('potent')) ? 'potentiels' : 'prospects';
-  if (t.includes('potent')) return 'potentiels';
-  return 'inconnus';
-}
-const COLORS = { clients: '#2ecc71', prospects: '#f39c12', potentiels: '#ffd166', concurrents: '#e74c3c', inconnus: '#8e44ad' };
-function markerSVG(category){
-  const col = COLORS[category] || COLORS.inconnus;
-  if (category === 'clients') return `<svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6" fill="${col}" stroke="white" stroke-width="1"/></svg>`;
-  if (category === 'prospects') return `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="6" y="2" width="8" height="8" transform="rotate(45 10 10)" fill="${col}" stroke="white" stroke-width="1"/></svg>`;
-  if (category === 'potentiels') return `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="6" y="2" width="8" height="8" transform="rotate(45 10 10)" fill="${col}" stroke="#b38a00" stroke-width="2"/></svg>`;
-  if (category === 'concurrents') return `<svg width="20" height="20" viewBox="0 0 20 20"><polygon points="10,2 2,18 18,18" fill="${col}" stroke="white" stroke-width="1"/></svg>`;
-  return `<svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6" fill="${col}" stroke="white" stroke-width="1"/></svg>`;
-}
-function createIcon(category){ return L.divIcon({ className:'custom-marker', html: markerSVG(category), iconSize:[20,20], iconAnchor:[10,10], popupAnchor:[0,-10] }); }
-function makePopup(row, lat, lon, addrKey, catLabel){
-  const nameKey = $colName.value.trim();
-  const name = nameKey && row[nameKey] ? `<div><strong>Nom</strong> : ${escapeHTML(row[nameKey])}</div>` : '';
-  const addr = addrKey && row[addrKey] ? `<div><strong>Adresse</strong> : ${escapeHTML(row[addrKey])}</div>` : '';
-  const cat = `<div><strong>Type</strong> : ${escapeHTML(catLabel)}</div>`;
-  const coord = (lat!=null && lon!=null) ? `<div><strong>Lat/Lon</strong> : ${lat.toFixed(6)}, ${lon.toFixed(6)}</div>` : '';
-  const extra = Object.entries(row).slice(0, 5).map(([k,v]) => `<div><em>${escapeHTML(k)}</em>: ${escapeHTML(String(v))}</div>`).join('');
+/* ========= Catégorisation & style ========= */
+const normalize=s=>String(s||'').trim().toLowerCase();
+function getCategory(type,sub){const t=normalize(type),st=normalize(sub);if(t.includes('client'))return'clients';if(t.includes('concur')||t.includes('compet'))return'concurrents';if(t.includes('prospect'))return(st.includes('potent')||t.includes('potent'))?'potentiels':'prospects';if(t.includes('potent'))return'potentiels';return'inconnus';}
+const COLORS={clients:'#2ecc71',prospects:'#f39c12',potentiels:'#ffd166',concurrents:'#e74c3c',inconnus:'#8e44ad'};
+const markerSVG=(cat)=>{const col=COLORS[cat]||COLORS.inconnus;
+  if(cat==='clients')return`<svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6" fill="${col}" stroke="white" stroke-width="1"/></svg>`;
+  if(cat==='prospects')return`<svg width="20" height="20" viewBox="0 0 20 20"><rect x="6" y="2" width="8" height="8" transform="rotate(45 10 10)" fill="${col}" stroke="white" stroke-width="1"/></svg>`;
+  if(cat==='potentiels')return`<svg width="20" height="20" viewBox="0 0 20 20"><rect x="6" y="2" width="8" height="8" transform="rotate(45 10 10)" fill="${col}" stroke="#b38a00" stroke-width="2"/></svg>`;
+  if(cat==='concurrents')return`<svg width="20" height="20" viewBox="0 0 20 20"><polygon points="10,2 2,18 18,18" fill="${col}" stroke="white" stroke-width="1"/></svg>`;
+  return`<svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6" fill="${col}" stroke="white" stroke-width="1"/></svg>`;};
+const createIcon=(cat)=>L.divIcon({className:'custom-marker',html:markerSVG(cat),iconSize:[20,20],iconAnchor:[10,10],popupAnchor:[0,-10]});
+function makePopup(row,lat,lon,addrKey,catLabel){
+  const nameKey=$colName.value.trim();
+  const name=nameKey&&row[nameKey]?`<div><strong>Nom</strong> : ${escapeHTML(row[nameKey])}</div>`:'';
+  const addr=addrKey&&row[addrKey]?`<div><strong>Adresse</strong> : ${escapeHTML(row[addrKey])}</div>`:'';
+  const cat=`<div><strong>Type</strong> : ${escapeHTML(catLabel)}</div>`;
+  const coord=(lat!=null&&lon!=null)?`<div><strong>Lat/Lon</strong> : ${lat.toFixed(6)}, ${lon.toFixed(6)}</div>`:'';
+  const extra=Object.entries(row).slice(0,5).map(([k,v])=>`<div><em>${escapeHTML(k)}</em>: ${escapeHTML(String(v))}</div>`).join('');
   return `<div>${name}${addr}${cat}${coord}<hr>${extra}</div>`;
 }
-function createPointMarker({ lat, lon, row, category, addrKey }){
-  const icon = createIcon(category);
-  const marker = L.marker([lat, lon], { icon });
-  const human = { clients:'Client B2B', prospects:'Prospect', potentiels:'Potentiel à prospecter', concurrents:'Concurrent', inconnus:'Inconnu' }[category] || 'Inconnu';
-  marker.bindPopup(makePopup(row, lat, lon, addrKey, human));
-  marker.on('click', (ev) => {
-    const nextZoom = Math.max(map.getZoom(), 18);
-    map.flyTo(ev.latlng, nextZoom, { animate:true, duration:0.6, easeLinearity:0.25 });
-    setTimeout(() => marker.openPopup(), 650);
-  });
+function createPointMarker({lat,lon,row,category,addrKey}){
+  const marker=L.marker([lat,lon],{icon:createIcon(category)});
+  const human={clients:'Client B2B',prospects:'Prospect',potentiels:'Potentiel à prospecter',concurrents:'Concurrent',inconnus:'Inconnu'}[category]||'Inconnu';
+  marker.bindPopup(makePopup(row,lat,lon,addrKey,human));
+  marker.on('click',ev=>{const nextZoom=Math.max(map.getZoom(),TARGET_ZOOM);map.flyTo(ev.latlng,nextZoom,{animate:true,duration:0.6,easeLinearity:0.25});setTimeout(()=>marker.openPopup(),650);});
   return marker;
 }
 
-/* ====== Géocodage ====== */
-const normalizeAddress = (a) => String(a||'').trim().replace(/\s+/g,' ').replace(/\n+/g,' ').toLowerCase();
-const cacheKey = (addr) => 'geoCache_v1:' + normalizeAddress(addr);
-function countryNameFromCode(code){ const m = { fr:'France', be:'Belgique', es:'Espagne', it:'Italie', de:'Allemagne', ch:'Suisse', lu:'Luxembourg' }; return m[code.toLowerCase()] || code.toUpperCase(); }
+/* ========= Géocodage ========= */
+const normalizeAddress=a=>String(a||'').trim().replace(/\s+/g,' ').replace(/\n+/g,' ').toLowerCase();
+const cacheKey=addr=>'geoCache_v1:'+normalizeAddress(addr);
+const countryNameFromCode=code=>({fr:'France',be:'Belgique',es:'Espagne',it:'Italie',de:'Allemagne',ch:'Suisse',lu:'Luxembourg'})[code.toLowerCase()]||code.toUpperCase();
 async function geocodeOne(addr){
-  const key = cacheKey(addr);
-  const cached = localStorage.getItem(key);
-  if (cached){ try { const {lat, lon} = JSON.parse(cached); if (lat!=null && lon!=null) return { lat, lon, source:'cache' }; } catch{} }
-
-  const geoapifyKey = ($geoapify?.value || '').trim();
-  const countryCode = ($country?.value || '').trim().toLowerCase();
-
-  if (geoapifyKey){
-    const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(addr)}&limit=1${countryCode?`&filter=countrycode:${countryCode}`:''}&apiKey=${encodeURIComponent(geoapifyKey)}`;
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('Geoapify HTTP ' + r.status);
-    const j = await r.json(); const f = j.features?.[0];
-    if (!f) throw new Error('Aucun résultat (Geoapify) pour: ' + addr);
-    const lat = f.geometry.coordinates[1], lon = f.geometry.coordinates[0];
-    localStorage.setItem(key, JSON.stringify({lat, lon}));
-    return { lat, lon, source:'geoapify' };
-  } else {
-    const email = ($email?.value || '').trim();
-    const baseParams = { format:'jsonv2', q: addr, limit:'1', addressdetails:'0', ...(email?{email}:{}) };
-    if (countryCode) baseParams.countrycodes = countryCode;
-
-    const fetchNom = async (params) => {
-      const url = `https://nominatim.openstreetmap.org/search?${new URLSearchParams(params)}`;
-      const r = await fetch(url, { headers:{ 'Accept':'application/json' } });
-      if (!r.ok) throw new Error('Nominatim HTTP ' + r.status);
-      return r.json();
-    };
-
-    let j = await fetchNom(baseParams);
-    let first = j?.[0];
-
-    if (!first && countryCode){
-      const forced = `${addr}, ${countryNameFromCode(countryCode)}`;
-      j = await fetchNom({ ...baseParams, q: forced });
-      first = j?.[0];
-      if (!first) throw new Error(`Aucun résultat (Nominatim) pour: "${addr}" (pays: ${countryCode.toUpperCase()})`);
-    }
-    if (!first) throw new Error(`Aucun résultat (Nominatim) pour: "${addr}"`);
-
-    const lat = Number(first.lat), lon = Number(first.lon);
-    localStorage.setItem(key, JSON.stringify({lat, lon}));
-    return { lat, lon, source:'nominatim' };
+  const key=cacheKey(addr); const cached=localStorage.getItem(key);
+  if(cached){try{const {lat,lon}=JSON.parse(cached);if(lat!=null&&lon!=null)return{lat,lon,source:'cache'};}catch{}}
+  const geoapifyKey=($geoapify?.value||'').trim(); const countryCode=($country?.value||'').trim().toLowerCase();
+  if(geoapifyKey){
+    const url=`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(addr)}&limit=1${countryCode?`&filter=countrycode:${countryCode}`:''}&apiKey=${encodeURIComponent(geoapifyKey)}`;
+    const r=await fetch(url); if(!r.ok) throw new Error('Geoapify HTTP '+r.status);
+    const j=await r.json(); const f=j.features?.[0]; if(!f) throw new Error('Aucun résultat (Geoapify) pour: '+addr);
+    const lat=f.geometry.coordinates[1], lon=f.geometry.coordinates[0]; localStorage.setItem(key,JSON.stringify({lat,lon})); return {lat,lon,source:'geoapify'};
+  }else{
+    const email=($email?.value||'').trim(); const base={format:'jsonv2',q:addr,limit:'1',addressdetails:'0',...(email?{email}:{})}; if(countryCode) base.countrycodes=countryCode;
+    const fetchNom=async params=>{const url=`https://nominatim.openstreetmap.org/search?${new URLSearchParams(params)}`;const r=await fetch(url,{headers:{'Accept':'application/json'}});if(!r.ok) throw new Error('Nominatim HTTP '+r.status);return r.json();};
+    let j=await fetchNom(base); let first=j?.[0];
+    if(!first && countryCode){ const forced=`${addr}, ${countryNameFromCode(countryCode)}`; j=await fetchNom({...base,q:forced}); first=j?.[0]; if(!first) throw new Error(`Aucun résultat (Nominatim) pour: "${addr}" (pays: ${countryCode.toUpperCase()})`);}
+    if(!first) throw new Error(`Aucun résultat (Nominatim) pour: "${addr}"`);
+    const lat=Number(first.lat), lon=Number(first.lon); localStorage.setItem(key,JSON.stringify({lat,lon})); return {lat,lon,source:'nominatim'};
   }
 }
 
-/* ====== Placement ====== */
+/* ========= Placement ========= */
 async function addMarkers(points){
-  let nCli=0, nPro=0, nPot=0, nCon=0;
-  for (const p of points){
-    const marker = createPointMarker(p);
-    if (p.category === 'clients') { groupLayers.clients.addLayer(marker); nCli++; }
-    else if (p.category === 'prospects') { groupLayers.prospects.addLayer(marker); nPro++; }
-    else if (p.category === 'potentiels') { groupLayers.potentiels.addLayer(marker); nPot++; }
-    else if (p.category === 'concurrents') { groupLayers.concurrents.addLayer(marker); nCon++; }
-    else { groupLayers.inconnus.addLayer(marker); }
-    currentMarkers.push({ lat:p.lat, lon:p.lon, properties:p.row, category:p.category });
-    $stPlotted.textContent = Number($stPlotted.textContent)+1;
-    $bar.style.width = `${Math.min(100, (Number($stPlotted.textContent)/Math.max(1, Number($stTotal.textContent)))*100)}%`;
+  let nCli=0,nPro=0,nPot=0,nCon=0;
+  for(const p of points){
+    const marker=createPointMarker(p);
+    if(p.category==='clients'){groupLayers.clients.addLayer(marker);nCli++;}
+    else if(p.category==='prospects'){groupLayers.prospects.addLayer(marker);nPro++;}
+    else if(p.category==='potentiels'){groupLayers.potentiels.addLayer(marker);nPot++;}
+    else if(p.category==='concurrents'){groupLayers.concurrents.addLayer(marker);nCon++;}
+    else{groupLayers.inconnus.addLayer(marker);}
+    currentMarkers.push({lat:p.lat,lon:p.lon,properties:p.row,category:p.category});
+    $stPlotted.textContent=Number($stPlotted.textContent)+1;
+    $bar.style.width=`${Math.min(100,(Number($stPlotted.textContent)/Math.max(1,Number($stTotal.textContent)))*100)}%`;
     await sleep(0);
   }
   $stCli.textContent=nCli; $stPro.textContent=nPro; $stPot.textContent=nPot; $stCon.textContent=nCon;
-
-  try {
-    const bounds = L.featureGroup(Object.values(groupLayers)).getBounds();
-    if (bounds.isValid()) map.fitBounds(bounds, { padding:[30,30] });
-  } catch {}
-  $btnExport.disabled = currentMarkers.length === 0;
+  try{const bounds=L.featureGroup(Object.values(groupLayers)).getBounds(); if(bounds.isValid()) map.fitBounds(bounds,{padding:[30,30]});}catch{}
+  $btnExport.disabled=currentMarkers.length===0;
 }
 
-/* ====== Heat ====== */
-function buildHeatData(category){ const arr = []; const layer = groupLayers[category]; if (!layer) return arr; layer.eachLayer(m => { const ll = m.getLatLng(); arr.push([ll.lat, ll.lng, 0.5]); }); return arr; }
-function toggleHeat(category, enabled){
-  if (enabled){
-    if (!heatLayers[category]){ const data = buildHeatData(category); heatLayers[category] = L.heatLayer(data, { radius: 25, blur: 15, maxZoom: 14 }); }
-    heatLayers[category].addTo(map);
-  } else { if (heatLayers[category]) map.removeLayer(heatLayers[category]); }
-}
+/* ========= Heatmap ========= */
+function buildHeatData(category){const arr=[];const layer=groupLayers[category];if(!layer)return arr;layer.eachLayer(m=>{const ll=m.getLatLng();arr.push([ll.lat,ll.lng,0.5]);});return arr;}
+function toggleHeat(category,enabled){ if(enabled){ if(!heatLayers[category]){heatLayers[category]=L.heatLayer(buildHeatData(category),{radius:25,blur:15,maxZoom:14});} heatLayers[category].addTo(map);} else { if(heatLayers[category]) map.removeLayer(heatLayers[category]); }}
 
-/* ====== Run principal ====== */
+/* ========= Run principal ========= */
 async function run(){
-  if (!parsedRows.length){ alert('Veuillez charger un fichier.'); return; }
-  Object.values(groupLayers).forEach(gl => gl.clearLayers());
-  Object.values(heatLayers).forEach(h => { if (h) map.removeLayer(h); });
-  heatLayers = { clients:null, prospects:null, potentiels:null, concurrents:null };
-  currentMarkers = []; errors = [];
-  $stPlotted.textContent = '0'; $stErrors.textContent = '0'; $bar.style.width = '0%'; $log.innerHTML = '';
-  $stCli.textContent='0'; $stPro.textContent='0'; $stPot.textContent='0'; $stCon.textContent='0';
-  $btnExportErr.disabled = true;
+  if(!parsedRows.length){alert('Veuillez charger un fichier.');return;}
+  Object.values(groupLayers).forEach(gl=>gl.clearLayers());
+  Object.values(heatLayers).forEach(h=>{if(h)map.removeLayer(h);}); heatLayers={clients:null,prospects:null,potentiels:null,concurrents:null};
+  currentMarkers=[]; errors=[]; $stPlotted.textContent='0'; $stErrors.textContent='0'; $bar.style.width='0%'; $log.innerHTML=''; $stCli.textContent='0'; $stPro.textContent='0'; $stPot.textContent='0'; $stCon.textContent='0'; $btnExportErr.disabled=true;
 
-  const latKey = $colLat.value.trim(), lonKey = $colLon.value.trim();
-  const addrKey = $colAddr.value.trim(), typeKey = $colType.value.trim(), subKey = $colSub.value.trim();
+  const latKey=$colLat.value.trim(), lonKey=$colLon.value.trim(), addrKey=$colAddr.value.trim(), typeKey=$colType.value.trim(), subKey=$colSub.value.trim();
+  const haveLatLon=!!latKey&&!!lonKey, haveAddr=!!addrKey;
+  setInvalid($colLat,!haveLatLon&&!haveAddr); setInvalid($colLon,!haveLatLon&&!haveAddr); setInvalid($colAddr,!haveLatLon&&!haveAddr);
+  if(!haveLatLon&&!haveAddr){log('⚠️ Renseignez soit <b>lat/lon</b>, soit une colonne <b>adresse</b>.','error');return;}
 
-  const haveLatLon = !!latKey && !!lonKey;
-  const haveAddr   = !!addrKey;
-
-  setInvalid($colLat, !haveLatLon && !haveAddr);
-  setInvalid($colLon, !haveLatLon && !haveAddr);
-  setInvalid($colAddr, !haveLatLon && !haveAddr);
-  if (!haveLatLon && !haveAddr){ log('⚠️ Renseignez soit <b>lat/lon</b>, soit une colonne <b>adresse</b>.', 'error'); return; }
-
-  const maxN = Math.max(0, Number($maxGeocode.value) || 0);
-  const delay = Math.max(300, Number($delay.value) || 1000);
-  let withCoords = [], toGeocode = [];
-
-  for (const row of parsedRows){
-    const lat = haveLatLon ? toNumber(row[latKey]) : null;
-    const lon = haveLatLon ? toNumber(row[lonKey]) : null;
-    const addr = haveAddr ? String(row[addrKey]||'').replace(/\s+/g,' ').trim() : '';
-    const type = typeKey ? row[typeKey] : '';
-    const theSub  = subKey ? row[subKey] : '';
-    const category = getCategory(type, theSub);
-
-    if (lat!=null && lon!=null){
-      withCoords.push({ lat, lon, row, category, addrKey });
-    } else if (addr) {
-      toGeocode.push({ addr, row, addrKey, type, sub: theSub, category });
-    } else {
-      errors.push({ row, error:'Aucune coordonnée ni adresse', context:{ addr, type, sub: theSub } });
-    }
+  const maxN=Math.max(0,Number($maxGeocode.value)||0); const delay=Math.max(300,Number($delay.value)||1000);
+  let withCoords=[], toGeocode=[];
+  for(const row of parsedRows){
+    const lat=haveLatLon?toNumber(row[latKey]):null; const lon=haveLatLon?toNumber(row[lonKey]):null;
+    const addr=haveAddr?String(row[addrKey]||'').replace(/\s+/g,' ').trim():''; const type=typeKey?row[typeKey]:''; const theSub=subKey?row[subKey]:'';
+    const category=getCategory(type,theSub);
+    if(lat!=null&&lon!=null){ withCoords.push({lat,lon,row,category,addrKey}); }
+    else if(addr){ toGeocode.push({addr,row,addrKey,type,sub:theSub,category}); }
+    else{ errors.push({row,error:'Aucune coordonnée ni adresse',context:{addr,type,sub:theSub}}); }
   }
-
-  $stTotal.textContent = parsedRows.length;
-  $stErrors.textContent = errors.length;
-  $stQueue.textContent = toGeocode.length;
+  $stTotal.textContent=parsedRows.length; $stErrors.textContent=errors.length; $stQueue.textContent=toGeocode.length;
   log(`Détection: ${withCoords.length} avec coordonnées, ${toGeocode.length} à géocoder.`);
 
   await addMarkers(withCoords);
 
-  let processed = 0;
-  for (const item of toGeocode){
-    if (maxN && processed >= maxN){ log(`Limite de ${maxN} géocodages atteinte.`, 'warn'); break; }
-    try {
-      const r = await geocodeOne(item.addr);
-      await addMarkers([{ lat:r.lat, lon:r.lon, row:item.row, category:item.category, addrKey:item.addrKey }]);
-    } catch(e) {
-      errors.push({ row:item.row, error:String(e.message||e), context:{ addr:item.addr, type:item.type, sub:item.sub } });
-      log(`❌ Géocodage KO: ${escapeHTML(String(e.message||e))}`, 'error');
-      $stErrors.textContent = errors.length;
-      $btnExportErr.disabled = errors.length === 0;
-    }
-    processed++; $stQueue.textContent = Math.max(0, Number($stQueue.textContent)-1);
+  let processed=0;
+  for(const item of toGeocode){
+    if(maxN && processed>=maxN){log(`Limite de ${maxN} géocodages atteinte.`,'warn');break;}
+    try{const r=await geocodeOne(item.addr); await addMarkers([{lat:r.lat,lon:r.lon,row:item.row,category:item.category,addrKey:item.addrKey}]);}
+    catch(e){errors.push({row:item.row,error:String(e.message||e),context:{addr:item.addr,type:item.type,sub:item.sub}});log(`❌ Géocodage KO: ${escapeHTML(String(e.message||e))}`,'error');$stErrors.textContent=errors.length;$btnExportErr.disabled=errors.length===0;}
+    processed++; $stQueue.textContent=Math.max(0,Number($stQueue.textContent)-1);
     await sleep(delay);
   }
 
-  toggleHeat('clients', $hClients.checked);
-  toggleHeat('prospects', $hProspects.checked);
-  toggleHeat('potentiels', $hPotentiels.checked);
-  toggleHeat('concurrents', $hConcurrents.checked);
-
-  if (!currentMarkers.length){ log('Aucun point placé. Vérifiez les colonnes et le séparateur CSV.', 'error'); }
-  else { log(`<b>Terminé</b>. Points posés: ${currentMarkers.length}.`, 'success'); }
-  $btnExportErr.disabled = errors.length === 0;
+  toggleHeat('clients',$hClients.checked); toggleHeat('prospects',$hProspects.checked); toggleHeat('potentiels',$hPotentiels.checked); toggleHeat('concurrents',$hConcurrents.checked);
+  if(!currentMarkers.length){log('Aucun point placé. Vérifiez les colonnes et le séparateur CSV.','error');} else {log(`<b>Terminé</b>. Points posés: ${currentMarkers.length}.`,'success');}
+  $btnExportErr.disabled=errors.length===0;
 }
 
-/* ====== Export GeoJSON ====== */
-function exportGeoJSON(){
-  const fc = { type: 'FeatureCollection',
-    features: currentMarkers.map(m => ({
-      type:'Feature',
-      geometry:{ type:'Point', coordinates:[m.lon, m.lat] },
-      properties:{ ...m.properties, category:m.category }
-    }))
-  };
-  const blob = new Blob([JSON.stringify(fc,null,2)], { type:'application/json' });
-  const url = URL.createObjectURL(blob); const a = document.createElement('a');
-  a.href = url; a.download = 'points.geojson'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-}
+/* ========= Exports ========= */
+function exportGeoJSON(){const fc={type:'FeatureCollection',features:currentMarkers.map(m=>({type:'Feature',geometry:{type:'Point',coordinates:[m.lon,m.lat]},properties:{...m.properties,category:m.category}}))};const blob=new Blob([JSON.stringify(fc,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='points.geojson';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}
+function csvEscape(val){if(val==null)return'';const s=String(val);return /[",\n;]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;}
+function exportErrorsCSV(){ if(!errors.length){alert('Aucune erreur à exporter.');return;} const latKey=$colLat.value.trim(), lonKey=$colLon.value.trim(), addrKey=$colAddr.value.trim(), typeKey=$colType.value.trim(), subKey=$colSub.value.trim(), nameKey=$colName.value.trim(); const headers=['id','nom','adresse','lat','lon','type','sous_type','message_erreur']; const lines=[headers.join(',')]; for(const e of errors){const r=e.row||{};const row=[csvEscape(r.id??''),csvEscape(nameKey?r[nameKey]:(r.nom??'')),csvEscape(addrKey?r[addrKey]:(r.adresse??'')),csvEscape(latKey?r[latKey]:(r.lat??'')),csvEscape(lonKey?r[lonKey]:(r.lon??'')),csvEscape(typeKey?r[typeKey]:(r.type??'')),csvEscape(subKey?r[subKey]:(r.sous_type??'')),csvEscape(e.error||'')];lines.push(row.join(','));} const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='erreurs_geocodage.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}
 
-/* ====== Export erreurs CSV ====== */
-function csvEscape(val){ if (val == null) return ''; const s = String(val); if (/[",\n;]/.test(s)) return `"${s.replace(/"/g,'""')}"`; return s; }
-function exportErrorsCSV(){
-  if (!errors.length){ alert('Aucune erreur à exporter.'); return; }
-  const latKey = $colLat.value.trim(), lonKey = $colLon.value.trim();
-  const addrKey = $colAddr.value.trim(), typeKey = $colType.value.trim(), subKey = $colSub.value.trim(), nameKey = $colName.value.trim();
-  const headers = ['id','nom','adresse','lat','lon','type','sous_type','message_erreur'];
-  const lines = [headers.join(',')];
-  for (const e of errors){
-    const r = e.row || {};
-    const row = [
-      csvEscape(r.id ?? ''),
-      csvEscape(nameKey ? r[nameKey] : (r.nom ?? '')),
-      csvEscape(addrKey ? r[addrKey] : (r.adresse ?? '')),
-      csvEscape(latKey ? r[latKey] : (r.lat ?? '')),
-      csvEscape(lonKey ? r[lonKey] : (r.lon ?? '')),
-      csvEscape(typeKey ? r[typeKey] : (r.type ?? '')),
-      csvEscape(subKey ? r[subKey] : (r.sous_type ?? '')),
-      csvEscape(e.error || '')
-    ];
-    lines.push(row.join(','));
-  }
-  const blob = new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob); const a = document.createElement('a');
-  a.href = url; a.download = 'erreurs_geocodage.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-}
+/* ========= Cache & filtres ========= */
+function clearCache(){const keys=Object.keys(localStorage);let n=0;for(const k of keys){if(k.startsWith('geoCache_v1:')){localStorage.removeItem(k);n++;}}log(`Cache vidé (${n} entrées).`);}
+function applyVisibility(){const toggle=(layer,on)=>on?(!map.hasLayer(layer)&&map.addLayer(layer)):(map.hasLayer(layer)&&map.removeLayer(layer));toggle(groupLayers.clients,$fClients.checked);toggle(groupLayers.prospects,$fProspects.checked);toggle(groupLayers.potentiels,$fPotentiels.checked);toggle(groupLayers.concurrents,$fConcurrents.checked);}
 
-/* ====== Cache & filtres ====== */
-function clearCache(){
-  const keys = Object.keys(localStorage); let n=0;
-  for (const k of keys){ if (k.startsWith('geoCache_v1:')) { localStorage.removeItem(k); n++; } }
-  log(`Cache vidé (${n} entrées).`);
-}
-function applyVisibility(){
-  const toggle = (layer, on) => on ? (!map.hasLayer(layer) && map.addLayer(layer)) : (map.hasLayer(layer) && map.removeLayer(layer));
-  toggle(groupLayers.clients, $fClients.checked);
-  toggle(groupLayers.prospects, $fProspects.checked);
-  toggle(groupLayers.potentiels, $fPotentiels.checked);
-  toggle(groupLayers.concurrents, $fConcurrents.checked);
-}
-[$fClients,$fProspects,$fPotentiels,$fConcurrents].forEach(cb => cb.addEventListener('change', applyVisibility));
-$hClients.addEventListener('change', () => toggleHeat('clients', $hClients.checked));
-$hProspects.addEventListener('change', () => toggleHeat('prospects', $hProspects.checked));
-$hPotentiels.addEventListener('change', () => toggleHeat('potentiels', $hPotentiels.checked));
-$hConcurrents.addEventListener('change', () => toggleHeat('concurrents', $hConcurrents.checked));
-
-/* ====== Init + Modal + Logo + Couleur sidebar ====== */
+/* ========= Init ========= */
 function init(){
-  $btnRun.addEventListener('click', run);
-  $btnExport.addEventListener('click', exportGeoJSON);
-  $btnExportErr.addEventListener('click', exportErrorsCSV);
-  el('btn-clear-cache').addEventListener('click', clearCache);
+  attachDnD();
+  [$fClients,$fProspects,$fPotentiels,$fConcurrents].forEach(cb=>cb.addEventListener('change',applyVisibility));
+  $hClients.addEventListener('change',()=>toggleHeat('clients',$hClients.checked));
+  $hProspects.addEventListener('change',()=>toggleHeat('prospects',$hProspects.checked));
+  $hPotentiels.addEventListener('change',()=>toggleHeat('potentiels',$hPotentiels.checked));
+  $hConcurrents.addEventListener('change',()=>toggleHeat('concurrents',$hConcurrents.checked));
+  $btnRun.addEventListener('click',run); $btnExport.addEventListener('click',exportGeoJSON); $btnExportErr.addEventListener('click',exportErrorsCSV); el('btn-clear-cache').addEventListener('click',clearCache);
 
-  const overlay = el('settingsOverlay');
-  el('btn-settings').addEventListener('click', () => { overlay.style.display = 'flex'; overlay.setAttribute('aria-hidden','false'); });
-  el('btn-close-settings').addEventListener('click', () => { overlay.style.display = 'none'; overlay.setAttribute('aria-hidden','true'); });
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.style.display = 'none'; overlay.setAttribute('aria-hidden','true'); } });
+  const overlay=el('settingsOverlay'); el('btn-settings').addEventListener('click',()=>{overlay.style.display='flex';overlay.setAttribute('aria-hidden','false');}); el('btn-close-settings').addEventListener('click',()=>{overlay.style.display='none';overlay.setAttribute('aria-hidden','true');}); overlay.addEventListener('click',e=>{if(e.target===overlay){overlay.style.display='none';overlay.setAttribute('aria-hidden','true');}});
 
-  // Logo (par défaut en dur) + upload
-  const defaultLogoDataURL =
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6aa3ff"/><stop offset="100%" stop-color="#7affb3"/></linearGradient></defs><rect rx="36" width="256" height="256" fill="url(#g)"/><g fill="white" opacity="0.95"><circle cx="86" cy="94" r="14"/><circle cx="170" cy="74" r="10"/><circle cx="182" cy="154" r="12"/><circle cx="98" cy="172" r="10"/><path d="M86 94 L170 74 L182 154 L98 172 Z" fill="none" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`);
-  const logoInput = el('logoInput'); const logoBox = el('logoBox');
-  const loadLogo = () => {
-    let dataURL = null;
-    try { dataURL = localStorage.getItem('appLogoDataURL'); } catch {}
-    if (!dataURL) { dataURL = defaultLogoDataURL; try { localStorage.setItem('appLogoDataURL', dataURL); } catch {} }
-    const img = new Image(); img.src = dataURL; img.alt = "Logo";
-    img.onload = () => { logoBox.innerHTML=''; logoBox.appendChild(img); };
-  };
+  // Logo par défaut (SVG) + upload
+  const defaultLogoDataURL='data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6aa3ff"/><stop offset="100%" stop-color="#7affb3"/></linearGradient></defs><rect rx="36" width="256" height="256" fill="url(#g)"/><g fill="white" opacity="0.95"><circle cx="86" cy="94" r="14"/><circle cx="170" cy="74" r="10"/><circle cx="182" cy="154" r="12"/><circle cx="98" cy="172" r="10"/><path d="M86 94 L170 74 L182 154 L98 172 Z" fill="none" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`);
+  const logoInput=el('logoInput'), logoBox=el('logoBox');
+  const loadLogo=()=>{let dataURL=null;try{dataURL=localStorage.getItem('appLogoDataURL');}catch{} if(!dataURL){dataURL=defaultLogoDataURL;try{localStorage.setItem('appLogoDataURL',dataURL);}catch{}} const img=new Image();img.src=dataURL;img.alt="Logo";img.onload=()=>{logoBox.innerHTML='';logoBox.appendChild(img);};};
   loadLogo();
-  logoInput?.addEventListener('change', (e) => {
-    const file = e.target.files?.[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => { const dataURL = reader.result; try { localStorage.setItem('appLogoDataURL', dataURL); } catch {} const img = new Image(); img.src = dataURL; img.alt = "Logo"; img.onload = () => { logoBox.innerHTML=''; logoBox.appendChild(img); }; };
-    reader.readAsDataURL(file);
-  });
+  logoInput?.addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;const r=new FileReader();r.onload=()=>{const dataURL=r.result;try{localStorage.setItem('appLogoDataURL',dataURL);}catch{} const img=new Image();img.src=dataURL;img.alt="Logo";img.onload=()=>{logoBox.innerHTML='';logoBox.appendChild(img);};};r.readAsDataURL(file);});
 
-  // Couleur sidebar
-  const sidebar = el('sidebar');
-  const colorInput = el('sidebarColor');
-  const saved = localStorage.getItem('sidebarColor');
-  if (saved){ sidebar.style.background = saved; if(colorInput) colorInput.value = saved; }
-  document.querySelectorAll('.swatch').forEach(sw => {
-    sw.addEventListener('click', () => {
-      const c = sw.dataset.color; sidebar.style.background = c; localStorage.setItem('sidebarColor', c); if(colorInput) colorInput.value = c;
-    });
-  });
-  colorInput?.addEventListener('input', (e) => { const v = e.target.value; sidebar.style.background = v; localStorage.setItem('sidebarColor', v); });
+  // Couleur sidebar (input + palette)
+  const sidebar=el('sidebar'); const colorInput=el('sidebarColor'); const saved=localStorage.getItem('sidebarColor'); if(saved){sidebar.style.background=saved; if(colorInput) colorInput.value=saved;}
+  document.querySelectorAll('.swatch').forEach(sw=>sw.addEventListener('click',()=>{const c=sw.dataset.color;sidebar.style.background=c;localStorage.setItem('sidebarColor',c); if(colorInput) colorInput.value=c;}));
+  colorInput?.addEventListener('input',e=>{const v=e.target.value;sidebar.style.background=v;localStorage.setItem('sidebarColor',v);});
 
-  // Enregistrement SW (PWA)
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js').catch(console.error);
-    });
-  }
+  // Service Worker
+  if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('service-worker.js').catch(console.error);});}
 }
 init();
 </script>
